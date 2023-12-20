@@ -1,13 +1,13 @@
   server {
     listen 80;
-    server_name xwiki.itdev.intellisurvey.com;
+    server_name xwiki.$YOUR_DOMAIN;
 #    return 301 https://<your_subdomain.com>$request_uri;
-    return 301 https://xwiki.itdev.intellisurvey.com:8080$request_uri;
+    return 301 https://xwiki.$YOUR_DOMAIN:8080$request_uri;
          }
 
    server {
     listen 443 ssl;
-    server_name xwiki.itdev.intellisurvey.com;
+    server_name xwiki.$YOUR_DOMAIN;
 
     ssl_certificate /certs/wc_intellisurvey_com.crt;
     ssl_certificate_key /certs/wc_intellisurvey_com.key;
@@ -16,12 +16,12 @@
  #   error_log /var/log/nginx/data-error.log combined;
 
     location / {
-       proxy_pass http://192.168.60.114:8080/;
+       proxy_pass http://$YOUR_IP_ADDRESS:8080/;
        proxy_set_header X-Real-IP  $remote_addr;
        proxy_set_header X-Forwarded-For $remote_addr;
        proxy_set_header Host $host;
        proxy_set_header X-Forwarded-Proto $scheme;
-       proxy_redirect http://192.168.60.114:8080 $scheme://$http_host/;
+       proxy_redirect http://$YOUR_IP_ADDRESS:8080 $scheme://$http_host/;
        proxy_http_version 1.1;
        proxy_set_header Upgrade $http_upgrade;
 #       proxy_set_header Connection $connection_upgrade;
