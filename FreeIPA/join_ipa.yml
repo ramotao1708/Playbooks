@@ -14,9 +14,9 @@
       - ipa-client
     ipa_dns4_conn: enp0s3
     ipa_dns4_ns:
-      - 192.168.60.108
-      - 10.30.1.11
-      - 10.30.1.12
+      - ${IP_ADDRESS}
+      - ${IP_ADDRESS}
+      - ${IP_ADDRESS}
 #
 #  NOTE:   Default is to make variable private.  The string referenced by name:
 #          becomes the Ansible variable.
@@ -36,8 +36,8 @@
         type: ethernet
         dns4: "{{ ipa_dns4_ns }}"
         dns4_search:
-          - "priv.intellisurvey.com"
-          - "intellisurvey.com"
+          - "${YOUR_DOMAIN}"
+          - "${YOUR_DOMAIN}"
         state: present
       notify: restart netman
 
@@ -50,7 +50,7 @@
         state: latest
 
     - name: Join FreeIPA
-      command: ipa-client-install --mkhomedir --domain=itdev.intellisurvey.com --server=ipa-server.itdev.intellisurvey.com --no-ntp --unattended --principal  "{{ ipa_username }}" --password "{{ ipa_password }}"
+      command: ipa-client-install --mkhomedir --domain=${IPA_DOMAIN} --server=${IPA_SERVER} --no-ntp --unattended --principal  "{{ ipa_username }}" --password "{{ ipa_password }}"
 
     - name: Service oddjobd is enabled and running
       systemd:
