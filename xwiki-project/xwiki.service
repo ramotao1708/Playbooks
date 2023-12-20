@@ -1,0 +1,16 @@
+escription=xwiki service with podman
+After=podman.service network-online.target
+Requires=podman.service network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory=/opt/xwiki/xwiki
+User=xwiki
+Group=xwiki
+#Restart=always
+
+ExecStart=/usr/bin/podman-compose up -d
+ExecStop=/usr/bin/podman-compose down
+ExecReload=/usr/bin/podman-compose down
+ExecReload=/usr/bin/podman-compose up -d 
