@@ -1,4 +1,4 @@
-# Updating bookstack
+## Updating bookstack
 These notes are from the process followed when upgrading from version 23.05 to Version 23.08.3
 
 ## Take backups
@@ -33,4 +33,5 @@ Clear caches as recommended
 ```shell
 php artisan cache:clear
 php artisan config:clear
-php artisan view:clear
+php artisan view:clear 
+```
