@@ -1,0 +1,65 @@
+---
+# Join a host to FreeIPA.  Mostly POC.
+#
+
+- hosts:
+    - '{{ target }}'
+#    - flip_ipa
+
+  collections:
+    - community.general
+
+  vars:
+    ipa_pkgs:
+      - ipa-client
+    ipa_dns4_conn: enp0s3
+    ipa_dns4_ns:
+      - 192.168.60.108
+      - 10.30.1.11
+      - 10.30.1.12
+#
+#  NOTE:   Default is to make variable private.  The string referenced by name:
+#          becomes the Ansible variable.
+  vars_prompt:
+    - name: ipa_username
+      prompt: FreeIPA user with join permissions?
+      private: no
+
+    - name: ipa_password
+      prompt: FreeIPA user password?
+
+  tasks:
+    - name: Add two IPv4 DNS server addresses
+      #community.general.nmcli:
+      nmcli:
+        conn_name: "{{ ipa_dns4_conn }}"
+        type: ethernet
+        dns4: "{{ ipa_dns4_ns }}"
+        dns4_search:
+          - "priv.intellisurvey.com"
+          - "intellisurvey.com"
+        state: present
+      notify: restart netman
+
+    - name: Flush handlers
+      meta: flush_handlers
+
+    - name: Install FreeIPA client
+      package:
+        name:  "{{ ipa_pkgs }}"
+        state: latest
+
+    - name: Join FreeIPA
+      command: ipa-client-install --mkhomedir --domain=itdev.intellisurvey.com --server=ipa-server.itdev.intellisurvey.com --no-ntp --unattended --principal  "{{ ipa_username }}" --password "{{ ipa_password }}"
+
+    - name: Service oddjobd is enabled and running
+      systemd:
+        name:    oddjobd
+        state:   started
+        enabled: yes
+
+  handlers:
+    - name: restart netman
+      service:
+        name:  NetworkManager
+        state: restarted
