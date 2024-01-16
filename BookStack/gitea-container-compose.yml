@@ -1,0 +1,41 @@
+version: "3"
+
+networks:
+  gitea:
+    external: false
+
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=gitea
+      - POSTGRES_PASSWORD=gitea123
+      - POSTGRES_DB=gitea
+    volumes:
+      - ./postgres:/var/lib/postgresql/data:z
+      - /etc/localtime:/etc/localtime:ro
+
+  server:
+    depends_on:
+      - db
+    image: gitea/gitea:latest
+    container_name: gitea
+    environment:
+      - GITEADB_TYPE=postgres
+      - POSTGRES_USER=gitea
+      - POSTGRES_PASSWORD=gitea123
+      - POSTGRES_DB=gitea
+      - USER_UID=1000
+      - USER_GID=1000
+    restart: unless-stopped
+    networks:
+      - gitea
+    volumes:
+      - ./data:/var/lib/gitea
+#      - /home/git/.ssh/:/data/git/.ssh
+      - ./config:/etc/gitea
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "8080:3000"
+      - "2222:22"
