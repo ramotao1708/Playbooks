@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:mainline
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./conf:/etc/nginx/conf.d
+      - ./certs:/certs
+#      - ./conf/resolvers.conf:/etc/nginx/conf.d/resolvers.conf
